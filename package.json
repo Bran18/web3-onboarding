@@ -8,11 +8,14 @@
   ],
   "scripts": {
     "dev:webapp": "cd webapp && bun run dev",
-    "dev:backend": "cd backend && bun run start",
+    "dev:backend": "cd backend && bun run --watch src/server.ts",
     "dev": "concurrently \"bun run dev:webapp\" \"bun run dev:backend\"",
     "build:webapp": "cd webapp && bun run build",
-    "build:backend": "cd backend && bun run build",
-    "build": "bun run build:webapp && bun run build:backend"
+    "build:backend": "cd backend && tsc",
+    "build": "bun run build:webapp && bun run build:backend",
+    "start:webapp": "cd webapp && bun run start",
+    "start:backend": "cd backend && node dist/server.js",
+    "start": "concurrently \"bun run start:webapp\" \"bun run start:backend\""
   },
   "devDependencies": {
     "concurrently": "^8.0.1"
