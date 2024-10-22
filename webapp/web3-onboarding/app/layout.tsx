@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/components/providers'
+import { RootLayoutWrapper } from '@/components/layout/root-layout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <RootLayoutWrapper>
+            {children}
+          </RootLayoutWrapper>
+        </Providers>
       </body>
     </html>
   )

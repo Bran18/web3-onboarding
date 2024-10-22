@@ -1,11 +1,8 @@
-import { HomeSection } from "@/components/sections/home-section";
-import RootLayout from "./layout";
+import HomeDashboard from '@/app/(routes)/home/page';
 
 
 export default function Home() {
   return (
-    <RootLayout>
-      <HomeSection />
-    </RootLayout>
+      <HomeDashboard />
   )
 }
