@@ -8,7 +8,7 @@ import { MainContent } from './sidebar/main-content';
 export const RootLayoutWrapper = ({ children }: LayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden bg-background">
+      <div className="flex h-screen overflow-hidden">
         <AppSidebar />
         <MainContent>
           {children}

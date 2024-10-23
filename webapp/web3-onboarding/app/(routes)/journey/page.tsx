@@ -5,13 +5,13 @@ import JourneyDashboard from "@/components/sections/routes/journey-section";
 
 export default function JourneyPage() {
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 p-6">
+    <div className="w-full mx-auto space-y-6 p-6">
       {/* Journey Dashboard */}
       <JourneyDashboard />
       {/* Learning Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <TipOfTheDay />
         <LearningPathOverview />
+        <TipOfTheDay />
         <MilestoneRewards />
       </div>
     </div>

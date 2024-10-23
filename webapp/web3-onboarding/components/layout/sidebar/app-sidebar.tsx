@@ -16,7 +16,7 @@ import { UserAccount } from './user-account';
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r flex-shrink-0">
       <SidebarHeader className="border-b px-3 py-2 h-14">
         <h1 className="font-bold text-xl">Onboard3</h1>
       </SidebarHeader>

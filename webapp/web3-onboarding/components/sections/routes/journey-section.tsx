@@ -110,7 +110,7 @@ const JourneyDashboard = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-6">
+    <div className="w-full mx-auto space-y-6">
       {/* Progress Overview */}
       <Card className="w-full">
         <CardHeader>
