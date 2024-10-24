@@ -1,17 +1,17 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
   CheckCircle2, 
-  Circle, 
   Trophy, 
   Flame, 
   Star, 
   Lock,
-  Calendar
+  Calendar,
+  BookOpen
 } from "lucide-react";
 import {
   Tooltip,
@@ -19,15 +19,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  xpReward: number;
-  completed: boolean;
-  timestamp?: Date;
-}
+import Link from "next/link";
+import type { Chapter, Lesson } from "@/types/types";
 
 interface UserProgress {
   level: number;
@@ -37,48 +30,14 @@ interface UserProgress {
   lastCompleted?: Date;
 }
 
-const JourneyDashboard = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Set up your first wallet",
-      description: "Create and secure your first Web3 wallet",
-      xpReward: 50,
-      completed: false,
-    },
-    {
-      id: "2",
-      title: "Learn about Smart Contracts",
-      description: "Understand the basics of smart contracts",
-      xpReward: 75,
-      completed: false,
-    },
-    {
-      id: "3",
-      title: "Complete Basic Security Quiz",
-      description: "Test your knowledge of Web3 security",
-      xpReward: 100,
-      completed: false,
-    },
-  ]);
+interface JourneyDashboardProps {
+  initialChapters: Chapter[];
+  initialLessons: {
+    [key: string]: Lesson[]; // chapterId -> lessons
+  };
+}
 
-  const tomorrowTasks = [
-    {
-      id: "4",
-      title: "Deploy Your First Smart Contract",
-      description: "Learn to deploy a basic smart contract",
-      xpReward: 150,
-      completed: false,
-    },
-    {
-      id: "5",
-      title: "Interact with DeFi Protocols",
-      description: "Understanding DeFi basics and interactions",
-      xpReward: 125,
-      completed: false,
-    },
-  ];
-
+const JourneyDashboard = ({ initialChapters, initialLessons }: JourneyDashboardProps) => {
   const [progress, setProgress] = useState<UserProgress>({
     level: 1,
     currentXP: 0,
@@ -86,28 +45,37 @@ const JourneyDashboard = () => {
     streak: 3,
   });
 
-  const allTodayTasksCompleted = tasks.every(task => task.completed);
+  const todayChapter = initialChapters.find(chapter => chapter.status === 'available' || chapter.status === 'in_progress');
+  const nextChapter = initialChapters.find(chapter => chapter.status === 'locked');
+  
+  const todayLessons = todayChapter ? initialLessons[todayChapter.slug] : [];
+  const nextLessons = nextChapter ? initialLessons[nextChapter.slug] : [];
 
-  const completeTask = (taskId: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === taskId && !task.completed) {
-          setProgress((prev) => ({
-            ...prev,
-            currentXP: prev.currentXP + task.xpReward,
-            level: Math.floor((prev.currentXP + task.xpReward) / prev.requiredXP) + 1,
-          }));
+  const allTodayLessonsCompleted = todayLessons.every(lesson => lesson.status === 'completed');
 
-          return {
-            ...task,
-            completed: true,
-            timestamp: new Date(),
-          };
+  const calculateTotalXP = () => {
+    let total = 0;
+    // biome-ignore lint/complexity/noForEach: <explanation>
+    Object.values(initialLessons).forEach(chapterLessons => {
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      chapterLessons.forEach(lesson => {
+        if (lesson.status === 'completed') {
+          total += lesson.xpReward;
         }
-        return task;
-      })
-    );
+      });
+    });
+    return total;
   };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const totalXP = calculateTotalXP();
+    setProgress(prev => ({
+      ...prev,
+      currentXP: totalXP,
+      level: Math.floor(totalXP / prev.requiredXP) + 1,
+    }));
+  }, [initialLessons]);
 
   return (
     <div className="w-full mx-auto space-y-6">
@@ -141,70 +109,71 @@ const JourneyDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Tasks Grid */}
+      {/* Lessons Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Today's Tasks */}
+        {/* Current Chapter Lessons */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Calendar className="w-5 h-5" />
-              <span>Today&apos;s Tasks</span>
+              <BookOpen className="w-5 h-5" />
+              <span>{todayChapter?.title || "Get Started"}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`flex items-start space-x-4 p-4 rounded-lg border transition-colors ${
-                    task.completed ? "bg-gray-50 dark:bg-gray-800" : ""
-                  }`}
+              {todayLessons.map((lesson) => (
+                <Link
+                  key={lesson.id}
+                  href={`/journey/chapters/${todayChapter?.slug}/${lesson.slug}`}
                 >
-                  {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
-                  <button onClick={() => completeTask(task.id)} className="mt-1">
-                    {task.completed ? (
-                      <CheckCircle2 className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-gray-300" />
-                    )}
-                  </button>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className={`font-medium ${task.completed ? "text-gray-500 line-through" : ""}`}>
-                        {task.title}
-                      </h3>
-                      <Badge variant="secondary" className="flex items-center space-x-1">
-                        <Star className="w-3 h-3" />
-                        <span>{task.xpReward} XP</span>
-                      </Badge>
+                  <div
+                    className={`flex items-start space-x-4 p-4 rounded-lg border transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                      lesson.status === 'completed' ? "bg-gray-50 dark:bg-gray-800" : ""
+                    }`}
+                  >
+                    <div className="mt-1">
+                      {lesson.status === 'completed' ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <BookOpen className="w-5 h-5 text-blue-500" />
+                      )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{task.description}</p>
-                    {task.timestamp && (
-                      <p className="text-xs text-gray-400 mt-2">
-                        Completed {task.timestamp.toLocaleDateString()}
-                      </p>
-                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className={`font-medium ${lesson.status === 'completed' ? "text-gray-500" : ""}`}>
+                          {lesson.title}
+                        </h3>
+                        <Badge variant="secondary" className="flex items-center space-x-1">
+                          <Star className="w-3 h-3" />
+                          <span>{lesson.xpReward} XP</span>
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">{lesson.description}</p>
+                      {lesson.status === 'in_progress' && (
+                        <Badge variant="secondary" className="mt-2">In Progress</Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Tomorrow's Tasks */}
+        {/* Next Chapter Preview */}
         <TooltipProvider>
-          <Card className={!allTodayTasksCompleted ? "opacity-50" : ""}>
+          <Card className={!allTodayLessonsCompleted ? "opacity-50" : ""}>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calendar className="w-5 h-5" />
-                <span>Tomorrow&apos;s Tasks</span>
-                {!allTodayTasksCompleted && (
+                <span>{nextChapter?.title || "Coming Soon"}</span>
+                {!allTodayLessonsCompleted && (
                   <Tooltip>
                     <TooltipTrigger>
                       <Lock className="w-4 h-4 ml-2 text-gray-400" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Complete today&apos;s tasks to unlock tomorrow&apos;s challenges!</p>
+                      <p>Complete current chapter to unlock next challenges!</p>
                     </TooltipContent>
                   </Tooltip>
                 )}
@@ -212,23 +181,23 @@ const JourneyDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {tomorrowTasks.map((task) => (
+                {nextLessons.map((lesson) => (
                   <div
-                    key={task.id}
+                    key={lesson.id}
                     className="flex items-start space-x-4 p-4 rounded-lg border"
                   >
                     <div className="mt-1">
-                      <Circle className="w-5 h-5 text-gray-300" />
+                      <Lock className="w-5 h-5 text-gray-300" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium">{task.title}</h3>
+                        <h3 className="font-medium">{lesson.title}</h3>
                         <Badge variant="secondary" className="flex items-center space-x-1">
                           <Star className="w-3 h-3" />
-                          <span>{task.xpReward} XP</span>
+                          <span>{lesson.xpReward} XP</span>
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">{task.description}</p>
+                      <p className="text-sm text-gray-500 mt-1">{lesson.description}</p>
                     </div>
                   </div>
                 ))}

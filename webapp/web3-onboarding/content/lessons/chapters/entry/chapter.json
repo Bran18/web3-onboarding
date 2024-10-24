@@ -1,0 +1,11 @@
+{
+    "id": "entry",
+    "title": "Web3 Basics",
+    "description": "Start your Web3 journey with fundamental concepts",
+    "order": 1,
+    "xpReward": 200,
+    "category": "Web3 Basics",
+    "status": "available",
+    "totalLessons": 3,
+    "completedLessons": 0
+  }

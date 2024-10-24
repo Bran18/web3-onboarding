@@ -1,0 +1,11 @@
+{
+    "id": "Contracts",
+    "title": "Smart Contracts",
+    "description": "Start your Web3 journey with fundamental concepts",
+    "order": 1,
+    "xpReward": 200,
+    "category": "Smart Contracts",
+    "status": "available",
+    "totalLessons": 3,
+    "completedLessons": 0
+  }
