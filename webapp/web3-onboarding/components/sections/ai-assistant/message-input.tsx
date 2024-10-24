@@ -45,7 +45,7 @@ export default function MessageInput({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mt-2">
       {/* Optional disclaimer */}
       <div className="absolute -top-6 left-0 right-0 text-center">
         <span className="text-xs text-muted-foreground">
