@@ -1,5 +1,5 @@
 import { Calendar, Home, Bot, BookOpen, Activity, Boxes } from 'lucide-react';
-import { NavigationItem } from './types';
+import type { NavigationItem } from './types';
 
 export const navigationItems: NavigationItem[] = [
   {
@@ -14,7 +14,7 @@ export const navigationItems: NavigationItem[] = [
   },
   {
     title: "AI Assistant",
-    url: "/assistant",
+    url: "/ai-assistant",
     icon: Bot,
   },
   {

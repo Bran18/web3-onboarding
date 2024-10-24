@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils';
-import { LayoutProps } from './types';
+import type { LayoutProps } from './types';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export const MainContent = ({ children, className }: LayoutProps) => {

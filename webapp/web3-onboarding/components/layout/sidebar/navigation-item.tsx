@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { NavigationItem as NavItem } from './types';
+import type { NavigationItem as NavItem } from './types';
 import { SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 
 export const NavigationItem = ({ item }: { item: NavItem }) => {

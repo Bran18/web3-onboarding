@@ -1,7 +1,7 @@
 'use client'
 
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { LayoutProps } from './sidebar/types';
+import type { LayoutProps } from './sidebar/types';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { MainContent } from './sidebar/main-content';
 

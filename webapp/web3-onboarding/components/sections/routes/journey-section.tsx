@@ -160,6 +160,7 @@ const JourneyDashboard = () => {
                     task.completed ? "bg-gray-50 dark:bg-gray-800" : ""
                   }`}
                 >
+                  {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                   <button onClick={() => completeTask(task.id)} className="mt-1">
                     {task.completed ? (
                       <CheckCircle2 className="w-5 h-5 text-green-500" />
