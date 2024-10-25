@@ -17,7 +17,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 import Link from "next/link";
-import Markdown from "react-markdown";
+import { CustomMarkdown } from "@/components/shared/markdown/index";
 import type { Lesson } from "@/types/types";
 
 interface LessonContentProps {
@@ -29,7 +29,9 @@ export function LessonContent({ lesson }: LessonContentProps) {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<"not_started" | "in_progress" | "completed">(
+  const [status, setStatus] = useState<
+    "not_started" | "in_progress" | "completed"
+  >(
     lesson.status === "completed"
       ? "completed"
       : lesson.status === "in_progress"
@@ -135,9 +137,8 @@ export function LessonContent({ lesson }: LessonContentProps) {
 
           {/* Main Content */}
           <div className="prose dark:prose-invert max-w-none mb-8">
-            <Markdown>{lesson.content}</Markdown>
+            <CustomMarkdown content={lesson.content} />
           </div>
-
           {/* Action Buttons */}
           <div className="flex items-center justify-between mt-8">
             <div className="flex items-center space-x-2">
